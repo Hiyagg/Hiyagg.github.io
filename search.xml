@@ -3,48 +3,69 @@
   
     
     <entry>
-      <title>Day 0</title>
-      <link href="/2018/07/20/day-0/"/>
-      <url>/2018/07/20/day-0/</url>
-      <content type="html"><![CDATA[<p>啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊</p>]]></content>
+      <title>知识</title>
+      <link href="/2018/07/20/0/"/>
+      <url>/2018/07/20/0/</url>
+      <content type="html"><![CDATA[]]></content>
       
       <categories>
           
-          <category> 生活 </category>
+          <category> 知识 </category>
           
-          <category> 瞎扯 </category>
+          <category> 算法 </category>
           
       </categories>
       
       
         <tags>
             
-            <tag> time </tag>
+            <tag> LeetCode </tag>
             
         </tags>
       
     </entry>
     
     <entry>
-      <title>First Blood</title>
-      <link href="/2018/07/20/%E4%B8%80%E8%A1%80/"/>
-      <url>/2018/07/20/%E4%B8%80%E8%A1%80/</url>
-      <content type="html"><![CDATA[<p>噢噢噢噢噢噢噢噢噢噢噢噢噢噢噢噢噢</p>]]></content>
+      <title>工具</title>
+      <link href="/2018/07/20/1/"/>
+      <url>/2018/07/20/1/</url>
+      <content type="html"><![CDATA[]]></content>
       
       <categories>
           
           <category> 工具 </category>
           
-          <category> APP </category>
+          <category> App </category>
           
       </categories>
       
       
         <tags>
             
-            <tag> python </tag>
+            <tag> Python </tag>
             
-            <tag> app </tag>
+        </tags>
+      
+    </entry>
+    
+    <entry>
+      <title>生活</title>
+      <link href="/2018/07/20/2/"/>
+      <url>/2018/07/20/2/</url>
+      <content type="html"><![CDATA[]]></content>
+      
+      <categories>
+          
+          <category> 生活 </category>
+          
+          <category> 相册 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 便当 </tag>
             
         </tags>
       
