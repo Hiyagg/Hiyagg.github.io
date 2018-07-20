@@ -17,7 +17,7 @@
   display: block;
 
   width: 100%;
-  max-width: 200px;
+  max-width: 100px;
   margin: auto;
 }
 .need-share-button_dropdown {
@@ -27,7 +27,8 @@
   visibility: hidden;
   overflow: hidden;
 
-  width: 300px;
+  width:150px;
+  
 
   font-size: 16px;
 
