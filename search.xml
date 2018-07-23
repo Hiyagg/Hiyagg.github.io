@@ -49,10 +49,10 @@
     </entry>
     
     <entry>
-      <title>工具</title>
+      <title>Markdown语法</title>
       <link href="/2018/07/20/1/"/>
       <url>/2018/07/20/1/</url>
-      <content type="html"><![CDATA[]]></content>
+      <content type="html"><![CDATA[<p>新起一行<br>试试<br>使用<br><kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>Del</kbd> 重启电脑</p>]]></content>
       
       <categories>
           
