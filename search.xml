@@ -26,6 +26,29 @@
     </entry>
     
     <entry>
+      <title>工具</title>
+      <link href="/2018/07/20/1/"/>
+      <url>/2018/07/20/1/</url>
+      <content type="html"><![CDATA[]]></content>
+      
+      <categories>
+          
+          <category> 工具 </category>
+          
+          <category> App </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Python </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
       <title>生活</title>
       <link href="/2018/07/20/2/"/>
       <url>/2018/07/20/2/</url>
@@ -43,29 +66,6 @@
         <tags>
             
             <tag> 便当 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    <entry>
-      <title>Markdown语法</title>
-      <link href="/2018/07/20/1/"/>
-      <url>/2018/07/20/1/</url>
-      <content type="html"><![CDATA[<p>新起一行<br>试试<br>使用<br><kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>Del</kbd> 重启电脑</p>]]></content>
-      
-      <categories>
-          
-          <category> 工具 </category>
-          
-          <category> App </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> Python </tag>
             
         </tags>
       
