@@ -3,23 +3,50 @@
   
     
     <entry>
-      <title>知识</title>
-      <link href="/2018/07/20/0/"/>
-      <url>/2018/07/20/0/</url>
-      <content type="html"><![CDATA[<p>啊啊啊啊啊啊啊啊啊啊<a id="more"></a>啊啊啊？</p>]]></content>
+      <title>生活</title>
+      <link href="/2018/07/20/2/"/>
+      <url>/2018/07/20/2/</url>
+      <content type="html"><![CDATA[]]></content>
       
       <categories>
           
-          <category> 知识 </category>
+          <category> 生活 </category>
           
-          <category> 算法 </category>
+          <category> 相册 </category>
           
       </categories>
       
       
         <tags>
             
-            <tag> LeetCode </tag>
+            <tag> 便当 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
+      <title>比特币核心钱包RPC配置</title>
+      <link href="/2018/07/20/0/"/>
+      <url>/2018/07/20/0/</url>
+      <content type="html"><![CDATA[<h3 id="下载"><a href="#下载" class="headerlink" title="下载"></a>下载</h3><p><a href="https://bitcoin.org/zh_CN/choose-your-wallet" target="_blank" rel="noopener">https://bitcoin.org/zh_CN/choose-your-wallet</a><br>选择Bitcoin Core以及需要的版本，然后点安装，下载Bitcoin Core<br>这里以windows版本为例</p><h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><p>无脑下一步就行了，截止到目前，所需要硬盘容量为200G<br>安装完了运行，就会自动同步区块了，很慢，毕竟要下载所有历史数据，我同步了三天，取决于网络 </p><h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><p>设置——选项——打开配置文件</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">server=1</span><br><span class="line"></span><br><span class="line">rpcuser=xxx</span><br><span class="line"></span><br><span class="line">rpcpassword=xxx</span><br><span class="line"></span><br><span class="line">rpcallowip=192.168.2.1</span><br><span class="line"></span><br><span class="line">rpcport=8332</span><br></pre></td></tr></table></figure><p>参数说明：</p><p>server：RPC服务 1打开 0关闭</p><p>rpcuser：RPC用户名</p><p>rpcpassword：RPC密码</p><p>rpcallowip：指定远程访问机器的IP </p><p>rpcport：RPC端口 默认为8332  </p><p>保存并重启钱包，打开浏览器，访问<a href="http://127.0.0.1:8332" target="_blank" rel="noopener">127.0.0.1:8332</a><br>提示 JSONRPC server handles only POST requests<br>就说明RPC服务已经运行起来了</p><p>当然可以再测试一下远程调用<br><code>curl -X POST  rpc_server_ip:8332 -u user:passwd -d &#39;{&quot;method&quot;: &quot;getnetworkinfo&quot;}&#39;</code></p>]]></content>
+      
+      <categories>
+          
+          <category> 知识 </category>
+          
+          <category> 数字货币 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Bitcoin </tag>
+            
+            <tag> RPC </tag>
+            
+            <tag> 区块链 </tag>
             
         </tags>
       
@@ -43,29 +70,6 @@
         <tags>
             
             <tag> Python </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    <entry>
-      <title>生活</title>
-      <link href="/2018/07/20/2/"/>
-      <url>/2018/07/20/2/</url>
-      <content type="html"><![CDATA[]]></content>
-      
-      <categories>
-          
-          <category> 生活 </category>
-          
-          <category> 相册 </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> 便当 </tag>
             
         </tags>
       
