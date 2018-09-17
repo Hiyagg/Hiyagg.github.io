@@ -580,9 +580,10 @@
       
         
           <h3 id="下载"><a href="#下载" class="headerlink" title="下载"></a>下载</h3><p><a href="https://bitcoin.org/zh_CN/choose-your-wallet" target="_blank" rel="noopener">https://bitcoin.org/zh_CN/choose-your-wallet</a><br>选择Bitcoin Core以及需要的版本，然后点安装，下载Bitcoin Core<br>这里以windows版本为例</p>
-<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><p>无脑下一步就行了，截止到目前，所需要硬盘容量为200G<br>安装完了运行，就会自动同步区块了，很慢，毕竟要下载所有历史数据，我同步了三天，取决于网络 </p>
+<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><p>无脑下一步就行了，截止到目前，所需要硬盘容量为200G<br>安装完了运行，就会自动同步区块了，很慢，毕竟要下载所有历史数据，我同步了三天，取决于网络<br>如果是linux系统，进入bin文件夹执行<br><code>./bitcoind --datadir=指定数据存放路径 --daemon</code><br>开启服务，不指定路径的话程序默认在 /当前用户/.bitcoin 保存数据 </p>
 <h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><p>设置——选项——打开配置文件</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">server=1</span><br><span class="line"></span><br><span class="line">rpcuser=xxx</span><br><span class="line"></span><br><span class="line">rpcpassword=xxx</span><br><span class="line"></span><br><span class="line">rpcallowip=192.168.2.1</span><br><span class="line"></span><br><span class="line">rpcport=8332</span><br></pre></td></tr></table></figure>
+<p>linux需要手动在数据文件夹创建bitcoin.conf配置文件</p>
 <p>参数说明：<br>
           <!--noindex-->
           <div class="post-button text-center">
