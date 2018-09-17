@@ -3,9 +3,36 @@
   
     
     <entry>
-      <title>使用frp实现内网穿透</title>
-      <link href="/2018/09/05/1/"/>
-      <url>/2018/09/05/1/</url>
+      <title>远程开机和远程桌面</title>
+      <link href="/2018/09/05/T-remote-1/"/>
+      <url>/2018/09/05/T-remote-1/</url>
+      <content type="html"><![CDATA[<p>有时候需要在外面访问家里的电脑或者在家里访问公司的电脑，那么远程桌面就需要搞起来，一般有以下三种情形</p><h3 id="无路由器管理权限"><a href="#无路由器管理权限" class="headerlink" title="无路由器管理权限"></a>无路由器管理权限</h3><p>这种情况无法远程开机，也不能使用微软自带的远程桌面，老老实实的使用TeamViewer这款软件吧，公司电脑挂着它，不关机，在别的地方可以远程访问，手机上下载同名APP也可行<br>优点：简单方便，生态完善，远程帮助朋(妹)友(子)解决电脑问题的神器<br>缺点：不能远程开机，有时候网速不快，不能开高清画质，并有可能会被误认为是商业用途而禁止使用</p><p>以下两种情况的前提是路由器桥接光猫，请先自行解决，<a href="https://www.baidu.com" target="_blank" rel="noopener">破解电信光猫改路由器为桥接</a></p><h3 id="有路由器管理权限，有公网IP"><a href="#有路由器管理权限，有公网IP" class="headerlink" title="有路由器管理权限，有公网IP"></a>有路由器管理权限，有公网IP</h3><p>这种情况就可以远程开机和使用Win10自带的远程桌面了，远程开机的前提是主板和网卡要支持，现在的设备一般都支持的，到BIOS里设置允许网络唤醒，然后网卡的配置里，以下这两个地方也要开启，让我很不解的是，不勾选允许关闭此设备以节约电源，就不能勾选允许此设备唤醒计算机了，emmm…只有我觉得这里是很矛盾的吗，不过我也管不着，这么选就对了…<br><img src="https://ws1.sinaimg.cn/large/ba9cece1gy1fvd3a0ebftj20cm0cbglv.jpg" alt=""><br><img src="https://ws1.sinaimg.cn/large/ba9cece1gy1fvd3aicsw9j20cl0773yj.jpg" alt=""></p><h4 id="路由器已刷机"><a href="#路由器已刷机" class="headerlink" title="路由器已刷机"></a>路由器已刷机</h4><p>热门机型的路由器大神们已经把需要的功能都集成打包好了，只需要刷入魔改后的系统即可享用，一劳永逸，例如我这台K2P刷了官改版，完全够日常使用了，当然还有更强大的OpenWrt等系统，看个人需求了<br>这里用到的有远程管理，端口转发，网络唤醒这三个功能<br><img src="https://ws1.sinaimg.cn/large/ba9cece1gy1fvd3bkh38ej20qp0mpmyq.jpg" alt=""></p><p>远程管理就是开放一个端口，使得外网可以访问这个路由器的管理页面，也可以用app来管理，不过刷过机了，官方app自带的功能就感觉有点不足了</p><p><img src="https://ws1.sinaimg.cn/large/ba9cece1gy1fvd3f7uylgj20hg0b8gll.jpg" alt=""></p><p>远程开机的端口：7<br>如果是直接在网页里面唤醒的方式，就用不着转发端口7，如果想要试一下发送唤醒包的方式来开机的，就需要转发，这里会涉及到一些windows系统中网卡的配置，Wake on Lan服务等，可以先在局域网试，可以唤醒了再用外网来尝试<br>远程桌面的端口：3389<br>Win10的远程桌面RDP协议使用的端口，当然也可以远程开机后就直接使用TeamViewer<br>远程SSH的端口：22<br>这里是转发路由器外网22端口到自己的局域网IP，这样就可以远程SSH到路由器中了<br><img src="https://ws1.sinaimg.cn/large/ba9cece1gy1fvd3fmmvafj20n20c8q3h.jpg" alt=""></p><p>远程开机，选择相应的网卡地址点发送就行了<br><img src="https://ws1.sinaimg.cn/large/ba9cece1gy1fvd3gmcp38j20en0a3dfr.jpg" alt=""></p><p>优点：Win10自带Remote Desk使用体验极佳，由于是直连的，10ms级别的延迟几乎感觉不到是在使用远程桌面，需要时再开机，节约用电，减少安全隐患<br>缺点：有吗？</p><h4 id="路由器未刷机"><a href="#路由器未刷机" class="headerlink" title="路由器未刷机"></a>路由器未刷机</h4><p>没有各种强大功能的路由器，就需要自己手动进入路由器里面去配置了，我之前的路由器是腾达的，不能刷机，需要telnet进入后再开启SSH，我还记得腾达那个中二的密码是Fireitup<br>通过iptables来配置端口转发，这里就不详细写了<br>在过程中遇到了各种问题，比如路由器的系统是busybox，精简了很多命令，不能用curl,crontab等等，还有电脑关机超过几分钟后，路由器就丢掉了网卡的mac地址，需要手动保存arp映射表等等问题<br>配置完成后可以通过手机app或者提供在线WOL服务的网页，向电脑的端口7发送唤醒包来开机，原理就是向端口7发送一个特殊格式的UDP报文来实现网络唤醒<br>后来我撸了一台斐讯的K2P刷了系统，刚下车不久，斐讯就翻车了，幸好。</p><p>优点：可以学习linux网络这块儿的部分知识<br>缺点：冷门的路由器，需要自己搜索相关的资料，可能会遇到各种不常见的问题，全靠自己解决</p><h4 id="DDNS"><a href="#DDNS" class="headerlink" title="DDNS"></a>DDNS</h4><p>虽然电信给了公网IP，但是每次光猫或者路由器重启，或者电信定期断开连接，导致宽带重新拨号后，公网IP就改变了，这时不知道新的IP就无法再使用远程开机<br>所以我们需要DDNS，即动态域名服务，在每次路由器的外网IP发生改变后，自动将域名解析到新的IP上，这样只需要记住固定的域名，就可以不用关心IP时不时的变化了<br>DDNS可以使用市面上现有的产品，花生壳向日葵什么的，也可以自行实现，定时检测外网IP，发生改变后，调用域名服务商提供的API接口来修改域名解析<br>因为我不太会写shell脚本，路由器里也没有python环境，所以我把DDNS脚本放在了远程服务器，路由器里定时去调用，这里不介绍了，可以移步  <a href="2018/07/20/K-python-1/">使用DNSPOD的API实现DDNS</a></p><h3 id="有路由器管理权限，无公网IP"><a href="#有路由器管理权限，无公网IP" class="headerlink" title="有路由器管理权限，无公网IP"></a>有路由器管理权限，无公网IP</h3><p>这种情况和情况2唯一的区别是路由器外网没有公网IP，所以需要做一个内网穿透<br>使用方法和配置请移步  <a href="2018/09/05/T-remote-0/">使用Frp实现内网穿透</a><br>这里也分路由器已刷机和未刷机两种情况，刷了机的直接在网页上填，没刷机的自己下载Frp到路由器里，然后配置<br>剩下的路由器转发部分和情况2中的一致<br>以远程开机为例，大致的原理就是， 本地电脑发送唤醒包–服务端口7–客户端（路由器）端口7–远程主机端口7–开机</p><p>优点: 因为自己的服务器公网IP不会经常改变，所以不需要再单独配置DDNS<br>缺点: 需要一台有公网IP的服务器，消耗自费流量，带宽受到服务器限制</p>]]></content>
+      
+      <categories>
+          
+          <category> 工具 </category>
+          
+          <category> 远程 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> RDP </tag>
+            
+            <tag> TeamViewer </tag>
+            
+            <tag> 端口转发 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
+      <title>使用Frp实现内网穿透</title>
+      <link href="/2018/09/05/T-remote-0/"/>
+      <url>/2018/09/05/T-remote-0/</url>
       <content type="html"><![CDATA[<p>因为需要在公网访问本地电脑上的数据进行测试，公司的宽带没有公网IP，不能直接用端口转发，所以只能自己动手搞内网穿透了，看了一下使用ngrok和frp两种方式的比较多，frp配置比较简单，就它了</p><h3 id="下载"><a href="#下载" class="headerlink" title="下载"></a>下载</h3><p>需要一台有公网IP的服务器来作为服务端，然后自己的内网电脑作为客户端，二者之间建立通道实现内网穿透<br>下载地址:  <a href="https://github.com/fatedier/frp/releases" target="_blank" rel="noopener">https://github.com/fatedier/frp/releases</a><br>选择相应的版本，我的服务端是Ubuntu，客户端是Win10，所以分别下载linux_amd64和windows_amd64</p><h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><h4 id="服务端"><a href="#服务端" class="headerlink" title="服务端"></a>服务端</h4><p>解压  <code>tar -xzvf frp_0.21.0_linux_amd64.tar.gz</code><br><img src="https://ws1.sinaimg.cn/large/ba9cece1gy1fuyi4abc1pj20ct04vmx6.jpg" alt=""><br>frpc开头的是C端文件，frps开头的是S端文件，还有一个证书文件<br>frps.ini是服务端配置文件，无需修改，默认端口是7000<br>直接运行frps <code>./frps -c ./frps.ini</code> 服务端就ok了<br><img src="https://ws1.sinaimg.cn/large/ba9cece1gy1fuyibsk0aoj20ge01hdfo.jpg" alt=""></p><h4 id="客户端"><a href="#客户端" class="headerlink" title="客户端"></a>客户端</h4><a id="more"></a><p>解压，和服务端一样的文件，修改客户端配置文件frpc.ini<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[common]</span><br><span class="line">server_addr = xx.xx.xx.xx</span><br><span class="line">server_port = 7000</span><br><span class="line"></span><br><span class="line">[otc]</span><br><span class="line">type = tcp   </span><br><span class="line">local_ip = 127.0.0.1</span><br><span class="line">local_port = 8332</span><br><span class="line">remote_port = 8332</span><br></pre></td></tr></table></figure></p><p>server_addr和server_port：服务端IP地址和端口<br>otc：通道的名字<br>type：连接类型<br>local_ip：本地服务的地址<br>local_port = 8332：本地服务的端口<br>remote_port = 8332：服务端的端口<br>打开cmd，先把frpc.exe拖进去 加上-c 再把frpc.ini拖进去<br><img src="https://ws1.sinaimg.cn/large/ba9cece1gy1fuyj7x7bx6j20kq03vjrf.jpg" alt=""><br>搞定，访问服务端的8332端口，就等于访问客户端的8332端口了</p>]]></content>
       
       <categories>
@@ -21,7 +48,7 @@
             
             <tag> 内网穿透 </tag>
             
-            <tag> frp </tag>
+            <tag> Frp </tag>
             
         </tags>
       
@@ -29,8 +56,8 @@
     
     <entry>
       <title>比特币核心钱包RPC配置</title>
-      <link href="/2018/08/14/0/"/>
-      <url>/2018/08/14/0/</url>
+      <link href="/2018/08/14/K-coin-0/"/>
+      <url>/2018/08/14/K-coin-0/</url>
       <content type="html"><![CDATA[<h3 id="下载"><a href="#下载" class="headerlink" title="下载"></a>下载</h3><p><a href="https://bitcoin.org/zh_CN/choose-your-wallet" target="_blank" rel="noopener">https://bitcoin.org/zh_CN/choose-your-wallet</a><br>选择Bitcoin Core以及需要的版本，然后点安装，下载Bitcoin Core<br>这里以windows版本为例</p><h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><p>无脑下一步就行了，截止到目前，所需要硬盘容量为200G<br>安装完了运行，就会自动同步区块了，很慢，毕竟要下载所有历史数据，我同步了三天，取决于网络<br>如果是linux系统，进入bin文件夹执行<br><code>./bitcoind --datadir=指定数据存放路径 --daemon</code><br>开启服务，不指定路径的话程序默认在 /当前用户/.bitcoin 保存数据 </p><h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><p>设置——选项——打开配置文件</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">server=1</span><br><span class="line"></span><br><span class="line">rpcuser=xxx</span><br><span class="line"></span><br><span class="line">rpcpassword=xxx</span><br><span class="line"></span><br><span class="line">rpcallowip=192.168.2.1</span><br><span class="line"></span><br><span class="line">rpcport=8332</span><br></pre></td></tr></table></figure><p>linux需要手动在数据文件夹创建bitcoin.conf配置文件</p><p>参数说明：<br><a id="more"></a><br>server：RPC服务 1打开 0关闭</p><p>rpcuser：RPC用户名</p><p>rpcpassword：RPC密码</p><p>rpcallowip：允许来自指定ip的连接 </p><p>rpcport：RPC监听端口 默认为8332  </p><p>保存并重启钱包，打开浏览器，访问<a href="http://127.0.0.1:8332" target="_blank" rel="noopener">127.0.0.1:8332</a><br>or  <code>curl 127.0.0.1:8332</code><br>提示 JSONRPC server handles only POST requests<br>就说明RPC服务已经运行起来了</p><p>当然可以再测试一下远程调用<br><code>curl -X POST  rpc_server_ip:8332 -u user:passwd -d &#39;{&quot;method&quot;: &quot;getnetworkinfo&quot;}&#39;</code></p>]]></content>
       
       <categories>
@@ -38,6 +65,8 @@
           <category> 知识 </category>
           
           <category> 数字货币 </category>
+          
+          <category> Bitcoin </category>
           
       </categories>
       
@@ -55,16 +84,287 @@
     </entry>
     
     <entry>
-      <title>生活</title>
-      <link href="/2018/07/20/2/"/>
-      <url>/2018/07/20/2/</url>
+      <title>常用的浏览器插件</title>
+      <link href="/2018/08/01/T-plugin-0/"/>
+      <url>/2018/08/01/T-plugin-0/</url>
+      <content type="html"><![CDATA[]]></content>
+      
+      <categories>
+          
+          <category> 工具 </category>
+          
+          <category> 插件 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 图床 </tag>
+            
+            <tag> 浏览器插件 </tag>
+            
+            <tag> Chrome </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
+      <title>日常使用的软件</title>
+      <link href="/2018/08/01/T-software-0/"/>
+      <url>/2018/08/01/T-software-0/</url>
+      <content type="html"><![CDATA[]]></content>
+      
+      <categories>
+          
+          <category> 工具 </category>
+          
+          <category> 软件 </category>
+          
+      </categories>
+      
+      
+    </entry>
+    
+    <entry>
+      <title>个人常用的第三方库记录</title>
+      <link href="/2018/07/20/K-python-0/"/>
+      <url>/2018/07/20/K-python-0/</url>
+      <content type="html"><![CDATA[]]></content>
+      
+      <categories>
+          
+          <category> 知识 </category>
+          
+          <category> Python </category>
+          
+          <category> 三方库 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Python </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
+      <title>常用的shell命令记录</title>
+      <link href="/2018/07/20/K-linux-0/"/>
+      <url>/2018/07/20/K-linux-0/</url>
+      <content type="html"><![CDATA[]]></content>
+      
+      <categories>
+          
+          <category> 知识 </category>
+          
+          <category> Linux </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Linux </tag>
+            
+            <tag> Shell </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
+      <title>笔记之【Flask Web开发】</title>
+      <link href="/2018/07/20/K-note-0/"/>
+      <url>/2018/07/20/K-note-0/</url>
+      <content type="html"><![CDATA[]]></content>
+      
+      <categories>
+          
+          <category> 知识 </category>
+          
+          <category> 笔记 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 笔记 </tag>
+            
+            <tag> Flask </tag>
+            
+            <tag> Web </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
+      <title>使用DNSPOD的API实现DDNS</title>
+      <link href="/2018/07/20/K-python-1/"/>
+      <url>/2018/07/20/K-python-1/</url>
+      <content type="html"><![CDATA[]]></content>
+      
+      <categories>
+          
+          <category> 知识 </category>
+          
+          <category> Python </category>
+          
+          <category> 自己的 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Python </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
+      <title>个人常用app记录</title>
+      <link href="/2018/07/20/T-app-0/"/>
+      <url>/2018/07/20/T-app-0/</url>
+      <content type="html"><![CDATA[]]></content>
+      
+      <categories>
+          
+          <category> 工具 </category>
+          
+          <category> App </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Android </tag>
+            
+            <tag> App </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
+      <title>Mysql设置远程访问的权限</title>
+      <link href="/2018/07/20/K-database-0/"/>
+      <url>/2018/07/20/K-database-0/</url>
+      <content type="html"><![CDATA[]]></content>
+      
+      <categories>
+          
+          <category> 知识 </category>
+          
+          <category> 数据库 </category>
+          
+          <category> Mysql </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Database </tag>
+            
+            <tag> Mysql </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
+      <title>git日常操作</title>
+      <link href="/2018/07/20/T-git-0/"/>
+      <url>/2018/07/20/T-git-0/</url>
+      <content type="html"><![CDATA[]]></content>
+      
+      <categories>
+          
+          <category> 工具 </category>
+          
+          <category> Git </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> git </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
+      <title>HTTP</title>
+      <link href="/2018/07/20/K-network-0/"/>
+      <url>/2018/07/20/K-network-0/</url>
+      <content type="html"><![CDATA[]]></content>
+      
+      <categories>
+          
+          <category> 知识 </category>
+          
+          <category> 网络 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> HTTP </tag>
+            
+            <tag> TCP/IP </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
+      <title>leetcode刷题之旅</title>
+      <link href="/2018/07/10/K-algorithm-0/"/>
+      <url>/2018/07/10/K-algorithm-0/</url>
+      <content type="html"><![CDATA[]]></content>
+      
+      <categories>
+          
+          <category> 知识 </category>
+          
+          <category> 算法 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Leetcode </tag>
+            
+            <tag> 算法 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
+      <title>食记</title>
+      <link href="/2018/06/01/L-cheese-0/"/>
+      <url>/2018/06/01/L-cheese-0/</url>
       <content type="html"><![CDATA[]]></content>
       
       <categories>
           
           <category> 生活 </category>
           
-          <category> 相册 </category>
+          <category> 食记 </category>
           
       </categories>
       
@@ -72,6 +372,29 @@
         <tags>
             
             <tag> 便当 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
+      <title>杂记</title>
+      <link href="/2018/06/01/L-things-0/"/>
+      <url>/2018/06/01/L-things-0/</url>
+      <content type="html"><![CDATA[]]></content>
+      
+      <categories>
+          
+          <category> 生活 </category>
+          
+          <category> 杂记 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 音乐 </tag>
             
         </tags>
       
