@@ -87,7 +87,7 @@
 <meta property="og:site_name" content="海洋锅锅">
 <meta property="og:description" content="下载https://bitcoin.org/zh_CN/choose-your-wallet选择Bitcoin Core以及需要的版本，然后点安装，下载Bitcoin Core这里以windows版本为例 安装无脑下一步就行了，截止到目前，所需要硬盘容量为200G安装完了运行，就会自动同步区块了，很慢，毕竟要下载所有历史数据，我同步了三天，取决于网络如果是linux系统，进入bin文件夹执行./b">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2018-09-17T16:15:27.437Z">
+<meta property="og:updated_time" content="2018-09-19T06:17:42.583Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="比特币核心钱包RPC配置">
 <meta name="twitter:description" content="下载https://bitcoin.org/zh_CN/choose-your-wallet选择Bitcoin Core以及需要的版本，然后点安装，下载Bitcoin Core这里以windows版本为例 安装无脑下一步就行了，截止到目前，所需要硬盘容量为200G安装完了运行，就会自动同步区块了，很慢，毕竟要下载所有历史数据，我同步了三天，取决于网络如果是linux系统，进入bin文件夹执行./b">
@@ -429,7 +429,7 @@
 <p>rpcallowip：允许来自指定ip的连接 </p>
 <p>rpcport：RPC监听端口 默认为8332  </p>
 <p>保存并重启钱包，打开浏览器，访问<a href="http://127.0.0.1:8332" target="_blank" rel="noopener">127.0.0.1:8332</a><br>or  <code>curl 127.0.0.1:8332</code><br>提示 JSONRPC server handles only POST requests<br>就说明RPC服务已经运行起来了</p>
-<p>当然可以再测试一下远程调用<br><code>curl -X POST  rpc_server_ip:8332 -u user:passwd -d &#39;{&quot;method&quot;: &quot;getnetworkinfo&quot;}&#39;</code></p>
+<p>当然可以再测试一下远程调用<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST  rpc_server_ip:8332 -u user:passwd -d <span class="string">'&#123;"method": "getnetworkinfo"&#125;'</span></span><br></pre></td></tr></table></figure></p>
 
       
     </div>

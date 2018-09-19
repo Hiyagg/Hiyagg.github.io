@@ -974,7 +974,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/04/20/K-python-0/" itemprop="url">个人常用的第三方库记录</a></h1>
+                <a class="post-title-link" href="/2018/04/20/K-python-0/" itemprop="url">常用的第三方库记录</a></h1>
         
 
         <div class="post-meta">
@@ -1566,7 +1566,10 @@
       
         
           
-            
+            <h3 id="tar"><a href="#tar" class="headerlink" title="tar"></a>tar</h3><p>tar -zvxf</p>
+<h3 id="nohup"><a href="#nohup" class="headerlink" title="nohup"></a>nohup</h3><p>ssh断开后，所有属于sshd进程组的进程都会结束<br>想要退出终端后仍然在后台运行程序，可以用nohup命令</p>
+<p>例如运行这个DDNS脚本： <code>nohup python3 ddns.py &amp;</code><br>使用pstree查看进程树，可以看见加上nohup后，python进程不会因为ssh退出就终止<br>脚本输出的内容在相同路径的nouhup.out文件里<br><img src="https://ws1.sinaimg.cn/large/ba9cece1gy1fven91yspdj20uf0f2n25.jpg" alt=""></p>
+
           
         
       
