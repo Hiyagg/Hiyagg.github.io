@@ -90,7 +90,7 @@
 <meta property="og:image" content="https://ws1.sinaimg.cn/large/ba9cece1gy1fuyi4abc1pj20ct04vmx6.jpg">
 <meta property="og:image" content="https://ws1.sinaimg.cn/large/ba9cece1gy1fuyibsk0aoj20ge01hdfo.jpg">
 <meta property="og:image" content="https://ws1.sinaimg.cn/large/ba9cece1gy1fuyj7x7bx6j20kq03vjrf.jpg">
-<meta property="og:updated_time" content="2018-09-18T11:33:17.976Z">
+<meta property="og:updated_time" content="2018-09-28T09:15:25.089Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="使用Frp实现内网穿透">
 <meta name="twitter:description" content="因为需要在公网访问本地电脑上的数据进行测试，公司的宽带没有公网IP，不能直接用端口转发，所以只能自己动手搞内网穿透了，看了一下使用ngrok和frp两种方式的比较多，frp配置比较简单，就它了 下载需要一台有公网IP的服务器来作为服务端，然后自己的内网电脑作为客户端，二者之间建立通道实现内网穿透下载地址:  https://github.com/fatedier/frp/releases选择相应的">
@@ -413,9 +413,9 @@
       
         <p>因为需要在公网访问本地电脑上的数据进行测试，公司的宽带没有公网IP，不能直接用端口转发，所以只能自己动手搞内网穿透了，看了一下使用ngrok和frp两种方式的比较多，frp配置比较简单，就它了</p>
 <h3 id="下载"><a href="#下载" class="headerlink" title="下载"></a>下载</h3><p>需要一台有公网IP的服务器来作为服务端，然后自己的内网电脑作为客户端，二者之间建立通道实现内网穿透<br>下载地址:  <a href="https://github.com/fatedier/frp/releases" target="_blank" rel="noopener">https://github.com/fatedier/frp/releases</a><br>选择相应的版本，我的服务端是Ubuntu，客户端是Win10，所以分别下载linux_amd64和windows_amd64</p>
-<h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><h4 id="服务端"><a href="#服务端" class="headerlink" title="服务端"></a>服务端</h4><p>解压  <code>tar -xzvf frp_0.21.0_linux_amd64.tar.gz</code><br><img src="https://ws1.sinaimg.cn/large/ba9cece1gy1fuyi4abc1pj20ct04vmx6.jpg" alt=""><br>frpc开头的是C端文件，frps开头的是S端文件，还有一个证书文件<br>frps.ini是服务端配置文件，无需修改，默认端口是7000<br>直接运行frps <code>./frps -c ./frps.ini</code> 服务端就ok了<br><img src="https://ws1.sinaimg.cn/large/ba9cece1gy1fuyibsk0aoj20ge01hdfo.jpg" alt=""></p>
-<h4 id="客户端"><a href="#客户端" class="headerlink" title="客户端"></a>客户端</h4><a id="more"></a>
-<p>解压，和服务端一样的文件，修改客户端配置文件frpc.ini<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[common]</span><br><span class="line">server_addr = xx.xx.xx.xx</span><br><span class="line">server_port = 7000</span><br><span class="line"></span><br><span class="line">[otc]</span><br><span class="line">type = tcp   </span><br><span class="line">local_ip = 127.0.0.1</span><br><span class="line">local_port = 8332</span><br><span class="line">remote_port = 8332</span><br></pre></td></tr></table></figure></p>
+<h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><a id="more"></a>
+<h4 id="服务端"><a href="#服务端" class="headerlink" title="服务端"></a>服务端</h4><p>解压  <code>tar -xzvf frp_0.21.0_linux_amd64.tar.gz</code><br><img src="https://ws1.sinaimg.cn/large/ba9cece1gy1fuyi4abc1pj20ct04vmx6.jpg" alt=""><br>frpc开头的是C端文件，frps开头的是S端文件，还有一个证书文件<br>frps.ini是服务端配置文件，无需修改，默认端口是7000<br>直接运行frps <code>./frps -c ./frps.ini</code> 服务端就ok了<br><img src="https://ws1.sinaimg.cn/large/ba9cece1gy1fuyibsk0aoj20ge01hdfo.jpg" alt=""></p>
+<h4 id="客户端"><a href="#客户端" class="headerlink" title="客户端"></a>客户端</h4><p>解压，和服务端一样的文件，修改客户端配置文件frpc.ini<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[common]</span><br><span class="line">server_addr = xx.xx.xx.xx</span><br><span class="line">server_port = 7000</span><br><span class="line"></span><br><span class="line">[otc]</span><br><span class="line">type = tcp   </span><br><span class="line">local_ip = 127.0.0.1</span><br><span class="line">local_port = 8332</span><br><span class="line">remote_port = 8332</span><br></pre></td></tr></table></figure></p>
 <p>server_addr和server_port：服务端IP地址和端口<br>otc：通道的名字<br>type：连接类型<br>local_ip：本地服务的地址<br>local_port = 8332：本地服务的端口<br>remote_port = 8332：服务端的端口</p>
 <p>打开cmd，先把frpc.exe拖进去 加上-c 再把frpc.ini拖进去<br><img src="https://ws1.sinaimg.cn/large/ba9cece1gy1fuyj7x7bx6j20kq03vjrf.jpg" alt=""><br>搞定，访问服务端的8332端口，就等于访问客户端的8332端口了</p>
 
@@ -559,7 +559,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-count">19</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -581,7 +581,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">37</span>
+                  <span class="site-state-item-count">39</span>
                   <span class="site-state-item-name">tags</span>
                 </a>
               </div>
