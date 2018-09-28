@@ -3,10 +3,39 @@
   
     
     <entry>
+      <title>给网站配置https证书</title>
+      <link href="/2018/09/28/K-linux-2/"/>
+      <url>/2018/09/28/K-linux-2/</url>
+      <content type="html"><![CDATA[<p>给自己的网站加个小绿锁吧，简洁的https证书申请和配置流程<br><a id="more"></a></p><h2 id="证书申请"><a href="#证书申请" class="headerlink" title="证书申请"></a>证书申请</h2><p>首先安装acme，会装到~/.acme.sh/<br><code>curl  https://get.acme.sh | sh</code><br>用了别人的东西，当然要给人家点个星了<br>acme.sh项目地址： <a href="https://github.com/Neilpang/acme.sh" target="_blank" rel="noopener">https://github.com/Neilpang/acme.sh</a><br>然后<code>source ~/.bashrc</code>重载一下 退出SSH再重连就可以使用acme.sh命令了</p><p>acme.sh支持多种方式验证，我这里使用的是webroot验证的方式<br><code>acme.sh --issue -d mydomain.com -d www.mydomain.com -w /var/www/mydomain.com/</code><br>-d 自己修改需要的域名 -w 指定网站根目录，acme会在那里生成一个验证文件，然后去访问它，验证完成后会自动删除</p><p>举个栗子，我只想给 <a href="http://www.hiyagg.com" target="_blank" rel="noopener">www.hiyagg.com</a> 生成证书，就<br><code>acme.sh --issue  -d www.hiyagg.com -w /var/www/blog/</code><br>因为我的hiyagg.com使用了github pages，所以不需要再给它证书了，不是解析到自己的服务器，也不能通过自己去验证<br>如果成功，相关的证书文件就会生成了，位置如下</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">[Fri Sep 28 11:51:01 EDT 2018] Creating domain key</span><br><span class="line">[Fri Sep 28 11:51:01 EDT 2018] The domain key is here: /root/.acme.sh/www.hiyagg.com/www.hiyagg.com.key</span><br><span class="line">[Fri Sep 28 11:51:01 EDT 2018] Single domain=&apos;www.hiyagg.com&apos;</span><br><span class="line">[Fri Sep 28 11:51:01 EDT 2018] Getting domain auth token for each domain</span><br><span class="line">[Fri Sep 28 11:51:01 EDT 2018] Getting webroot for domain=&apos;www.hiyagg.com&apos;</span><br><span class="line">[Fri Sep 28 11:51:01 EDT 2018] Getting new-authz for domain=&apos;www.hiyagg.com&apos;</span><br><span class="line">[Fri Sep 28 11:51:02 EDT 2018] The new-authz request is ok.</span><br><span class="line">[Fri Sep 28 11:51:02 EDT 2018] Verifying:www.hiyagg.com</span><br><span class="line">[Fri Sep 28 11:51:05 EDT 2018] Success</span><br><span class="line">[Fri Sep 28 11:51:05 EDT 2018] Verify finished, start to sign.</span><br><span class="line">[Fri Sep 28 11:51:06 EDT 2018] Cert success.</span><br><span class="line">... ...省略一大串</span><br><span class="line">[Fri Sep 28 11:51:06 EDT 2018] Your cert is in  /root/.acme.sh/www.hiyagg.com/www.hiyagg.com.cer </span><br><span class="line">[Fri Sep 28 11:51:06 EDT 2018] Your cert key is in  /root/.acme.sh/www.hiyagg.com/www.hiyagg.com.key </span><br><span class="line">[Fri Sep 28 11:51:06 EDT 2018] The intermediate CA cert is in  /root/.acme.sh/www.hiyagg.com/ca.cer </span><br><span class="line">[Fri Sep 28 11:51:06 EDT 2018] And the full chain certs is there:  /root/.acme.sh/www.hiyagg.com/fullchain.cer</span><br></pre></td></tr></table></figure><p>记住<strong>xxx.key</strong>和<strong>fullchain.cer</strong>的路径，后面会用到 </p><h2 id="Apache和Nginx配置修改"><a href="#Apache和Nginx配置修改" class="headerlink" title="Apache和Nginx配置修改"></a>Apache和Nginx配置修改</h2><h3 id="Apache"><a href="#Apache" class="headerlink" title="Apache"></a>Apache</h3><p>Apache我用的是Apache2，配置文件是分散的，我也没有去合成一个，就分别修改吧<br>所以需要修改的配置文件是/etc/apache2/ports.conf和/etc/apache2/sites-available/default-ssl.conf<br>ports conf 增加监听443端口就行了<br>因为我这里sites-enabled是直接链接的，所以改available里的配置文件就行了，看个人需求<br>ssl conf里，ServerName和DocumentRoot就不用说了，主要是这四个配置<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">SSLEngine on</span><br><span class="line">SSLCertificateFile      /root/.acme.sh/www.hiyagg.com/fullchain.cer</span><br><span class="line">SSLCertificateKeyFile   /root/.acme.sh/www.hiyagg.com/www.hiyagg.com.key</span><br><span class="line">SSLCertificateChainFile /root/.acme.sh/www.hiyagg.com/fullchain.cer</span><br></pre></td></tr></table></figure></p><p>修改为刚才生成的证书的路径，SSLCertificateFile和SSLCertificateChainFile是一样的</p><p>最后，需要增加一个http自动跳转到https的配置<br>写在000-default.conf里就好了，这个默认配置文件里写的是负责监听80端口那部分<br>在对应的VirtualHost块末尾加上重写规则<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">RewriteEngine on</span><br><span class="line">RewriteCond %&#123;HTTPS&#125; !=on</span><br><span class="line">RewriteRule ^(.*) https://%&#123;SERVER_NAME&#125;$1 [L,R]</span><br></pre></td></tr></table></figure></p><p>保存，退出，<code>sudo a2enmod ssl</code> 启动ssl模块<br>重启apache  <code>/etc/init.d/apache2 restart</code> 就OK了<br>打开浏览器，访问<a href="http://www.hiyagg.com,就会自动跳到https访问443端口去啦" target="_blank" rel="noopener">www.hiyagg.com,就会自动跳到https访问443端口去啦</a></p><h3 id="Nginx"><a href="#Nginx" class="headerlink" title="Nginx"></a>Nginx</h3><p>我这里Ng的配置都写在一个文件里，那就增加一块就好了<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">listen 443;</span><br><span class="line">server_name www.hiyagg.com; </span><br><span class="line">ssl on;</span><br><span class="line">ssl_certificate /root/.acme.sh/www.hiyagg.com/fullchain.cer;  </span><br><span class="line">ssl_certificate_key /root/.acme.sh/www.hiyagg.com/www.hiyagg.com.key；</span><br><span class="line">ssl_session_timeout 5m;</span><br><span class="line">ssl_protocols TLSv1 TLSv1.1 TLSv1.2;</span><br><span class="line">ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:HIGH:!aNULL:!MD5:!RC4:!DHE;</span><br><span class="line">ssl_prefer_server_ciphers on;</span><br><span class="line"></span><br><span class="line">location / &#123;</span><br><span class="line">root /var/www/blog; </span><br><span class="line">index index.html index.htm;</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p><p>最后，同样的，http跳转到https的配置，这次用302重定向的方式，如果确定不会改了，也可以用301<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">server&#123;</span><br><span class="line">listen 80;</span><br><span class="line">server_name www.hiyagg.com;</span><br><span class="line">return301 https://www.hiyagg.com$request_uri;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p><p>重启nginx，打开网站，小绿锁出现啦</p>]]></content>
+      
+      <categories>
+          
+          <category> 知识 </category>
+          
+          <category> Linux </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Linux </tag>
+            
+            <tag> Nginx </tag>
+            
+            <tag> Apache </tag>
+            
+            <tag> Http </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
       <title>使用Frp实现内网穿透</title>
       <link href="/2018/09/05/T-remote-0/"/>
       <url>/2018/09/05/T-remote-0/</url>
-      <content type="html"><![CDATA[<p>因为需要在公网访问本地电脑上的数据进行测试，公司的宽带没有公网IP，不能直接用端口转发，所以只能自己动手搞内网穿透了，看了一下使用ngrok和frp两种方式的比较多，frp配置比较简单，就它了</p><h3 id="下载"><a href="#下载" class="headerlink" title="下载"></a>下载</h3><p>需要一台有公网IP的服务器来作为服务端，然后自己的内网电脑作为客户端，二者之间建立通道实现内网穿透<br>下载地址:  <a href="https://github.com/fatedier/frp/releases" target="_blank" rel="noopener">https://github.com/fatedier/frp/releases</a><br>选择相应的版本，我的服务端是Ubuntu，客户端是Win10，所以分别下载linux_amd64和windows_amd64</p><h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><a id="more"></a><h4 id="服务端"><a href="#服务端" class="headerlink" title="服务端"></a>服务端</h4><p>解压  <code>tar -xzvf frp_0.21.0_linux_amd64.tar.gz</code><br><img src="https://ws1.sinaimg.cn/large/ba9cece1gy1fuyi4abc1pj20ct04vmx6.jpg" alt=""><br>frpc开头的是C端文件，frps开头的是S端文件，还有一个证书文件<br>frps.ini是服务端配置文件，无需修改，默认端口是7000<br>直接运行frps <code>./frps -c ./frps.ini</code> 服务端就ok了<br><img src="https://ws1.sinaimg.cn/large/ba9cece1gy1fuyibsk0aoj20ge01hdfo.jpg" alt=""></p><h4 id="客户端"><a href="#客户端" class="headerlink" title="客户端"></a>客户端</h4><p>解压，和服务端一样的文件，修改客户端配置文件frpc.ini<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[common]</span><br><span class="line">server_addr = xx.xx.xx.xx</span><br><span class="line">server_port = 7000</span><br><span class="line"></span><br><span class="line">[otc]</span><br><span class="line">type = tcp   </span><br><span class="line">local_ip = 127.0.0.1</span><br><span class="line">local_port = 8332</span><br><span class="line">remote_port = 8332</span><br></pre></td></tr></table></figure></p><p>server_addr和server_port：服务端IP地址和端口<br>otc：通道的名字<br>type：连接类型<br>local_ip：本地服务的地址<br>local_port = 8332：本地服务的端口<br>remote_port = 8332：服务端的端口</p><p>打开cmd，先把frpc.exe拖进去 加上-c 再把frpc.ini拖进去<br><img src="https://ws1.sinaimg.cn/large/ba9cece1gy1fuyj7x7bx6j20kq03vjrf.jpg" alt=""><br>搞定，访问服务端的8332端口，就等于访问客户端的8332端口了</p>]]></content>
+      <content type="html"><![CDATA[<p>因为需要在公网访问本地电脑上的数据进行测试，公司的宽带没有公网IP，不能直接用端口转发，所以只能自己动手搞内网穿透了，看了一下使用ngrok和frp两种方式的比较多，frp配置比较简单，就它了<br><a id="more"></a></p><h3 id="下载"><a href="#下载" class="headerlink" title="下载"></a>下载</h3><p>需要一台有公网IP的服务器来作为服务端，然后自己的内网电脑作为客户端，二者之间建立通道实现内网穿透<br>下载地址:  <a href="https://github.com/fatedier/frp/releases" target="_blank" rel="noopener">https://github.com/fatedier/frp/releases</a><br>选择相应的版本，我的服务端是Ubuntu，客户端是Win10，所以分别下载linux_amd64和windows_amd64</p><h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><h4 id="服务端"><a href="#服务端" class="headerlink" title="服务端"></a>服务端</h4><p>解压  <code>tar -xzvf frp_0.21.0_linux_amd64.tar.gz</code><br><img src="https://ws1.sinaimg.cn/large/ba9cece1gy1fuyi4abc1pj20ct04vmx6.jpg" alt=""><br>frpc开头的是C端文件，frps开头的是S端文件，还有一个证书文件<br>frps.ini是服务端配置文件，无需修改，默认端口是7000<br>直接运行frps <code>./frps -c ./frps.ini</code> 服务端就ok了<br><img src="https://ws1.sinaimg.cn/large/ba9cece1gy1fuyibsk0aoj20ge01hdfo.jpg" alt=""></p><h4 id="客户端"><a href="#客户端" class="headerlink" title="客户端"></a>客户端</h4><p>解压，和服务端一样的文件，修改客户端配置文件frpc.ini<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[common]</span><br><span class="line">server_addr = xx.xx.xx.xx</span><br><span class="line">server_port = 7000</span><br><span class="line"></span><br><span class="line">[otc]</span><br><span class="line">type = tcp   </span><br><span class="line">local_ip = 127.0.0.1</span><br><span class="line">local_port = 8332</span><br><span class="line">remote_port = 8332</span><br></pre></td></tr></table></figure></p><p>server_addr和server_port：服务端IP地址和端口<br>otc：通道的名字<br>type：连接类型<br>local_ip：本地服务的地址<br>local_port = 8332：本地服务的端口<br>remote_port = 8332：服务端的端口</p><p>打开cmd，先把frpc.exe拖进去 加上-c 再把frpc.ini拖进去<br><img src="https://ws1.sinaimg.cn/large/ba9cece1gy1fuyj7x7bx6j20kq03vjrf.jpg" alt=""><br>搞定，访问服务端的8332端口，就等于访问客户端的8332端口了</p>]]></content>
       
       <categories>
           
@@ -75,7 +104,7 @@
       <title>App记录</title>
       <link href="/2018/09/01/T-app-0/"/>
       <url>/2018/09/01/T-app-0/</url>
-      <content type="html"><![CDATA[]]></content>
+      <content type="html"><![CDATA[<p>记录一下手机里常用的APP<br><a id="more"></a></p>]]></content>
       
       <categories>
           
@@ -100,7 +129,7 @@
       <title>比特币核心钱包RPC配置</title>
       <link href="/2018/08/14/K-coin-0/"/>
       <url>/2018/08/14/K-coin-0/</url>
-      <content type="html"><![CDATA[<h3 id="下载"><a href="#下载" class="headerlink" title="下载"></a>下载</h3><p><a href="https://bitcoin.org/zh_CN/choose-your-wallet" target="_blank" rel="noopener">https://bitcoin.org/zh_CN/choose-your-wallet</a><br>选择Bitcoin Core以及需要的版本，然后点安装，下载Bitcoin Core<br>这里以windows版本为例</p><h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><p>无脑下一步就行了，截止到目前，所需要硬盘容量为200G<br>安装完了运行，就会自动同步区块了，很慢，毕竟要下载所有历史数据，我同步了三天，取决于网络<br>如果是linux系统，进入bin文件夹执行<br><code>./bitcoind --datadir=指定数据存放路径 --daemon</code><br>开启服务，不指定路径的话程序默认在 /当前用户/.bitcoin 保存数据 </p><a id="more"></a><h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><p>设置——选项——打开配置文件</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">server=1</span><br><span class="line"></span><br><span class="line">rpcuser=xxx</span><br><span class="line"></span><br><span class="line">rpcpassword=xxx</span><br><span class="line"></span><br><span class="line">rpcallowip=192.168.2.1</span><br><span class="line"></span><br><span class="line">rpcport=8332</span><br></pre></td></tr></table></figure><p>linux需要手动在数据文件夹创建bitcoin.conf配置文件</p><p><strong>参数说明</strong>：<br>server：RPC服务 1打开 0关闭</p><p>rpcuser：RPC用户名</p><p>rpcpassword：RPC密码</p><p>rpcallowip：允许来自指定ip的连接 </p><p>rpcport：RPC监听端口 默认为8332  </p><p>保存并重启钱包，打开浏览器，访问<a href="http://127.0.0.1:8332" target="_blank" rel="noopener">127.0.0.1:8332</a><br>or  <code>curl 127.0.0.1:8332</code><br>提示 JSONRPC server handles only POST requests<br>就说明RPC服务已经运行起来了</p><p>当然可以再测试一下远程调用<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST  rpc_server_ip:8332 -u user:passwd -d <span class="string">'&#123;"method": "getnetworkinfo"&#125;'</span></span><br></pre></td></tr></table></figure></p>]]></content>
+      <content type="html"><![CDATA[<p>因业务需要一个比特币全节点钱包作为钱包服务器来供网站调用RPC服务，所以研究了一下相关的配置<br><a id="more"></a></p><h3 id="下载"><a href="#下载" class="headerlink" title="下载"></a>下载</h3><p><a href="https://bitcoin.org/zh_CN/choose-your-wallet" target="_blank" rel="noopener">https://bitcoin.org/zh_CN/choose-your-wallet</a><br>选择Bitcoin Core以及需要的版本，然后点安装，下载Bitcoin Core<br>这里以windows版本为例</p><h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><p>无脑下一步就行了，截止到目前，所需要硬盘容量为200G<br>安装完了运行，就会自动同步区块了，很慢，毕竟要下载所有历史数据，我同步了三天，取决于网络<br>如果是linux系统，进入bin文件夹执行<br><code>./bitcoind --datadir=指定数据存放路径 --daemon</code><br>开启服务，不指定路径的话程序默认在 /~/.bitcoin 保存数据 </p><h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><p>设置——选项——打开配置文件</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">server=1</span><br><span class="line"></span><br><span class="line">rpcuser=xxx</span><br><span class="line"></span><br><span class="line">rpcpassword=xxx</span><br><span class="line"></span><br><span class="line">rpcallowip=192.168.2.1</span><br><span class="line"></span><br><span class="line">rpcport=8332</span><br></pre></td></tr></table></figure><p>linux需要手动在数据文件夹创建bitcoin.conf配置文件再写进去</p><p><strong>参数说明</strong>：<br>server：RPC服务 1打开 0关闭</p><p>rpcuser：RPC用户名</p><p>rpcpassword：RPC密码</p><p>rpcallowip：允许来自指定ip的连接 </p><p>rpcport：RPC监听端口 默认为8332  </p><p>保存并重启钱包，打开浏览器，访问<a href="http://127.0.0.1:8332" target="_blank" rel="noopener">127.0.0.1:8332</a><br>or  <code>curl 127.0.0.1:8332</code><br>提示 JSONRPC server handles only POST requests<br>就说明RPC服务已经运行起来了</p><p>当然可以再测试一下远程调用<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST  rpc_server_ip:8332 -u user:passwd -d <span class="string">'&#123;"method": "getnetworkinfo"&#125;'</span></span><br></pre></td></tr></table></figure></p>]]></content>
       
       <categories>
           
@@ -120,6 +149,35 @@
             <tag> RPC </tag>
             
             <tag> 区块链 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
+      <title>Nginx和Apache配置</title>
+      <link href="/2018/07/18/K-linux-1/"/>
+      <url>/2018/07/18/K-linux-1/</url>
+      <content type="html"><![CDATA[<h2 id="Nginx"><a href="#Nginx" class="headerlink" title="Nginx"></a>Nginx</h2><p>###</p><h2 id="Apache"><a href="#Apache" class="headerlink" title="Apache"></a>Apache</h2><p>###</p>]]></content>
+      
+      <categories>
+          
+          <category> 知识 </category>
+          
+          <category> Linux </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Linux </tag>
+            
+            <tag> Web </tag>
+            
+            <tag> Nginx </tag>
+            
+            <tag> Apache </tag>
             
         </tags>
       
@@ -154,7 +212,7 @@
       <title>远程开机和远程桌面</title>
       <link href="/2018/06/20/T-remote-1/"/>
       <url>/2018/06/20/T-remote-1/</url>
-      <content type="html"><![CDATA[<p>有时候需要在外面访问家里的电脑或者在家里访问公司的电脑，那么远程桌面就需要搞起来，一般有以下三种情形</p><ul><li>无路由器管理权限</li><li>有路由器管理权限，有公网IP</li><li>有路由器管理权限，无公网IP</li></ul><h3 id="无路由器管理权限"><a href="#无路由器管理权限" class="headerlink" title="无路由器管理权限"></a>无路由器管理权限</h3><p>一般公司的电脑就属于这种情况，无法远程开机（呼叫同事不算），可以使用微软自带的远程桌面但需要自己做内网穿透，所以老老实实的使用TeamViewer这款软件吧，公司的电脑挂着它不关机，在别的地方可以远程访问，手机上下载同名APP也可行<br>优点：简单方便，支持多种系统，远程帮助朋(妹)友(子)解决电脑问题的神器<br>缺点：不能远程开机，有时候网速不稳定，不能开高清画质，并有可能会被误认为是商业用途而禁止使用</p><p>下面两种情况的前提是路由器桥接光猫，这样路由器的wan口就是直连外网的，中间就少了一层网络<br>如果不是的，请先自行解决，<strong><a href="https://www.baidu.com" target="_blank" rel="noopener">破解电信光猫改路由器为桥接</a></strong><br><a id="more"></a></p><h3 id="有路由器管理权限，有公网IP"><a href="#有路由器管理权限，有公网IP" class="headerlink" title="有路由器管理权限，有公网IP"></a>有路由器管理权限，有公网IP</h3><p>这种情况就可以远程开机和使用Win10自带的远程桌面了，远程开机的前提是主板和网卡要支持，现在的设备一般都支持的，到BIOS里设置允许网络唤醒，然后网卡的配置里，以下这两个地方也要开启，让我很不解的是，不勾选允许关闭此设备以节约电源，就不能勾选允许此设备唤醒计算机了，emmm…只有我觉得这里是很矛盾的吗，不过我也管不着，这么选就对了…<br><img src="https://ws1.sinaimg.cn/large/ba9cece1gy1fvd3a0ebftj20cm0cbglv.jpg" alt=""><br><img src="https://ws1.sinaimg.cn/large/ba9cece1gy1fvd3aicsw9j20cl0773yj.jpg" alt=""></p><h4 id="路由器已刷机"><a href="#路由器已刷机" class="headerlink" title="路由器已刷机"></a>路由器已刷机</h4><p>热门机型的路由器大神们已经把需要的功能都集成打包好了，只需要刷入魔改后的系统即可享用，一劳永逸，一开始我这台K2P刷了官改版，完全够日常使用了，当然还有更强大的梅林，老毛子等固件，看个人需求了<br>这里用到的有<strong>远程管理</strong>，<strong>端口转发</strong>，<strong>网络唤醒</strong>这三个功能</p><p><img src="https://ws1.sinaimg.cn/large/ba9cece1gy1fvd3bkh38ej20qp0mpmyq.jpg" alt=""></p><p><strong>远程管理</strong>，就是开放一个端口，使得外网可以访问这个路由器的管理页面，就像在本地通过192.168.2.1去管理路由器一样，还可以用手机app来管理，不过刷过机了，官方app自带的功能就感觉有点不足了</p><p><img src="https://ws1.sinaimg.cn/large/ba9cece1gy1fvd3f7uylgj20hg0b8gll.jpg" alt=""></p><p><strong>端口转发</strong><br><strong>网络唤醒的端口：7 </strong><br>直接在网页上使用唤醒，就不用转发端口7，如果想试一下通过发送唤醒包的方式来开机，就需要转发<br>这里涉及到前面提出的windows的一些设置，可以先在局域网里试，成功了再尝试通过外网唤醒<br><strong>远程桌面的端口：3389</strong><br>Win10的远程桌面RDP协议使用的端口，当然也可以远程开机后就使用TeamViewer了<br><strong>远程SSH的端口：22</strong><br>这里是转发路由器外网22端口到它自己的内网地址，这样就可以远程SSH到路由器中了<br><img src="https://ws1.sinaimg.cn/large/ba9cece1gy1fvd3fmmvafj20n20c8q3h.jpg" alt=""></p><p><strong>网络唤醒</strong>，选择相应的网卡地址点发送就行了<br><img src="https://ws1.sinaimg.cn/large/ba9cece1gy1fvd3gmcp38j20en0a3dfr.jpg" alt=""></p><p>优点：Win10自带Remote Desk使用体验极佳，由于是直连的，10ms级别的延迟几乎感觉不到是在使用远程桌面，需要用到时再开机，节约用电，减少安全隐患<br>缺点：路由器要自己去刷机</p><h4 id="路由器未刷机"><a href="#路由器未刷机" class="headerlink" title="路由器未刷机"></a>路由器未刷机</h4><p>没有各种强大功能的路由器，就需要自己手动进入路由器里面去配置了，我之前的路由器是腾达的一款，不能刷机，只能通过telnet进入，腾达那个中二的密码是Fireitup，windows的telnet功能默认是关闭的，需要手动去打开后才可以在cmd里使用telnet命令连接路由器的23端口，然后通过iptables来配置端口转发，这里就不详细写了</p><p>在过程中遇到了各种问题，比如路由器的系统是厂家精简过的busybox，缺少各种shell命令等等，这里面最大的坑是，配置完后在局域网中可以发包唤醒主机，但通过外网去发包，刚关机几分钟内可以，时间长了就不行了，最后发现原因是我只设置了静态IP，没有设置静态ARP绑定，静态IP是把IP留某个MAC地址，而静态ARP是将MAC地址与某个IP绑定，二者有所区别，电脑关机超过几分钟后，ARP映射表里的IP-MAC对应记录因为超时被丢弃，当外网的唤醒包发到路由器里时，系统找不到MAC地址对应的IP地址，数据包就会被丢弃，根本不会送到网卡那里去，而局域网不管关机多久都可以唤醒是因为局域网是通过广播的方式发送了这个包，它根本不在意这个包中附带的MAC地址对应的IP地址是哪个</p><p>静态ARP绑定需要手动 <code>arp -s ip地址 mac地址</code>，完成后看见那条arp记录的状态是永久的了，就代表成功了，然后就可以通过手机app(如PingTools Pro)或者提供在线WoL(Wake on Lan)服务的网页，向路由器地址的端口7发送魔术封包(Magic Packet)来唤醒计算机,当然还可以的自己写一个脚本去发这个包，比如这个<a href="">用微信远程开机</a></p><p>后来我撸了一台斐讯的K2P，坑爹的斐讯系统里的arp只是个摆设，只能查看列表，不能用arp -s命令来绑定，也没有ip neigh，不过好在它可以刷机，然后我换了个华硕老毛子Padavan固件，很好很强大。<br>再后来刚下车不久，斐讯就翻车了，幸好。</p><p>优点：可以学习到一些网络这块儿的知识<br>缺点：冷门的路由器，需要自己搜索相关的资料，可能会遇到各种不常见的问题，全靠自己手动解决</p><h4 id="DDNS"><a href="#DDNS" class="headerlink" title="DDNS"></a>DDNS</h4><p>虽然电信给了公网IP，但是每次光猫或者路由器重启，或者电信定期断开连接，导致宽带重新拨号后，公网IP就改变了，这时不知道新的IP就无法再使用远程开机，所以我们需要及时获取最新的IP<br>拿到了IP后，可以用邮件通知自己，同时也可以实现DDNS，即动态域名服务，在每次路由器的外网IP发生改变后，自动将域名解析到最新的IP上，这样访问家里的设备只需要记住固定的域名，不用关心IP变成什么了，有了固定的域名还有个好处是可以在路由器或者自己的电脑上搭个小网站之类的<br>DDNS可以使用市面上现有的产品，花生壳向日葵什么的，也可以自行实现，定时检测外网IP，发生改变后，调用域名服务商提供的API接口来修改域名解析，因为我不太会写shell脚本，路由器里也没有python环境，所以我把DDNS脚本放在了远程服务器上，路由器定时去访问，这里不介绍了，可以移步  <strong><a href="2018/06/18/K-python-1/">使用DNSPOD的API实现DDNS</a></strong></p><h3 id="有路由器管理权限，无公网IP"><a href="#有路由器管理权限，无公网IP" class="headerlink" title="有路由器管理权限，无公网IP"></a>有路由器管理权限，无公网IP</h3><p>这种情况和情况2唯一的区别是路由器外网没有公网IP，所以需要做一个内网穿透<br>使用方法和配置请移步  <strong><a href="2018/09/05/T-remote-0/">使用Frp实现内网穿透</a></strong><br>服务端需要一台有公网IP的服务器，或者使用别人提供的在线的Frp服务，配置完成后继续弄客户端<br>这里也分路由器已刷机和未刷机两种情况，已刷机的直接在网页里填，没刷机的下载Frp到路由器里，修改配置文件后启动<br>到这一步，外网就可以访问路由器了，剩下的路由器配置端口转发的部分和情况2中的一致<br>以远程开机为例，大致的原理就是<br>公司电脑发送唤醒包→公网服务端→客户端（路由器）→家里的电脑→开机</p><p>优点: 因为自己的服务器公网IP不会经常改变，所以不需要再单独配置DDNS<br>缺点: 需要一台有公网IP的服务器，消耗自费流量，带宽受到服务器限制</p>]]></content>
+      <content type="html"><![CDATA[<p>有时候需要在外面访问家里的电脑或者在家里访问公司的电脑，那么远程桌面和远程开机就需要搞起来，一般有以下三种情形</p><ul><li>无路由器管理权限</li><li>有路由器管理权限，有公网IP</li><li>有路由器管理权限，无公网IP</li></ul><a id="more"></a><h3 id="无路由器管理权限"><a href="#无路由器管理权限" class="headerlink" title="无路由器管理权限"></a>无路由器管理权限</h3><p>一般公司的电脑就属于这种情况，无法远程开机（呼叫同事不算），可以使用微软自带的远程桌面但需要自己做内网穿透，所以老老实实的使用TeamViewer这款软件吧，公司的电脑挂着它不关机，在别的地方可以远程访问，手机上下载同名APP也可行<br>优点：简单方便，支持多种系统，远程帮助朋(妹)友(子)解决电脑问题的神器<br>缺点：不能远程开机，有时候网速不稳定，不能开高清画质，并有可能会被误认为是商业用途而禁止使用</p><p>下面两种情况的前提是路由器桥接光猫，这样路由器的wan口就是直连外网的，中间就少了一层网络<br>如果不是的，请先自行解决，<strong><a href="https://www.baidu.com" target="_blank" rel="noopener">破解电信光猫改路由器为桥接</a></strong></p><h3 id="有路由器管理权限，有公网IP"><a href="#有路由器管理权限，有公网IP" class="headerlink" title="有路由器管理权限，有公网IP"></a>有路由器管理权限，有公网IP</h3><p>这种情况就可以远程开机和使用Win10自带的远程桌面了，远程开机的前提是主板和网卡要支持，现在的设备一般都支持的，到BIOS里设置允许网络唤醒，然后网卡的配置里，以下这两个地方也要开启，让我很不解的是，不勾选允许关闭此设备以节约电源，就不能勾选允许此设备唤醒计算机了，emmm…只有我觉得这里是很矛盾的吗，不过我也管不着，这么选就对了…<br><img src="https://ws1.sinaimg.cn/large/ba9cece1gy1fvd3a0ebftj20cm0cbglv.jpg" alt=""><br><img src="https://ws1.sinaimg.cn/large/ba9cece1gy1fvd3aicsw9j20cl0773yj.jpg" alt=""></p><h4 id="路由器已刷机"><a href="#路由器已刷机" class="headerlink" title="路由器已刷机"></a>路由器已刷机</h4><p>热门机型的路由器大神们已经把需要的功能都集成打包好了，只需要刷入魔改后的系统即可享用，一劳永逸，一开始我这台K2P刷了官改版，完全够日常使用了，当然还有更强大的梅林，老毛子等固件，看个人需求了<br>这里用到的有<strong>远程管理</strong>，<strong>端口转发</strong>，<strong>网络唤醒</strong>这三个功能</p><p><img src="https://ws1.sinaimg.cn/large/ba9cece1gy1fvd3bkh38ej20qp0mpmyq.jpg" alt=""></p><p><strong>远程管理</strong>，就是开放一个端口，使得外网可以访问这个路由器的管理页面，就像在本地通过192.168.2.1去管理路由器一样，还可以用手机app来管理，不过刷过机了，官方app自带的功能就感觉有点不足了</p><p><img src="https://ws1.sinaimg.cn/large/ba9cece1gy1fvd3f7uylgj20hg0b8gll.jpg" alt=""></p><p><strong>端口转发</strong><br><strong>网络唤醒的端口：7 </strong><br>直接在网页上使用唤醒，就不用转发端口7，如果想试一下通过发送唤醒包的方式来开机，就需要转发<br>这里涉及到前面提出的windows的一些设置，可以先在局域网里试，成功了再尝试通过外网唤醒<br><strong>远程桌面的端口：3389</strong><br>Win10的远程桌面RDP协议使用的端口，当然也可以远程开机后就使用TeamViewer了<br><strong>远程SSH的端口：22</strong><br>这里是转发路由器外网22端口到它自己的内网地址，这样就可以远程SSH到路由器中了<br><img src="https://ws1.sinaimg.cn/large/ba9cece1gy1fvd3fmmvafj20n20c8q3h.jpg" alt=""></p><p><strong>网络唤醒</strong>，选择相应的网卡地址点发送就行了<br><img src="https://ws1.sinaimg.cn/large/ba9cece1gy1fvd3gmcp38j20en0a3dfr.jpg" alt=""></p><p>优点：Win10自带Remote Desk使用体验极佳，由于是直连的，10ms级别的延迟几乎感觉不到是在使用远程桌面，需要用到时再开机，节约用电，减少安全隐患<br>缺点：路由器要自己去刷机</p><h4 id="路由器未刷机"><a href="#路由器未刷机" class="headerlink" title="路由器未刷机"></a>路由器未刷机</h4><p>没有各种强大功能的路由器，就需要自己手动进入路由器里面去配置了，我之前的路由器是腾达的一款，不能刷机，只能通过telnet进入，腾达那个中二的密码是Fireitup，windows的telnet功能默认是关闭的，需要手动去打开后才可以在cmd里使用telnet命令连接路由器的23端口，然后通过iptables来配置端口转发，这里就不详细写了</p><p>在过程中遇到了各种问题，比如路由器的系统是厂家精简过的busybox，缺少各种shell命令等等，这里面最大的坑是，配置完后在局域网中可以发包唤醒主机，但通过外网去发包，刚关机几分钟内可以，时间长了就不行了，最后发现原因是我只设置了静态IP，没有设置静态ARP绑定，静态IP是把IP留某个MAC地址，而静态ARP是将MAC地址与某个IP绑定，二者有所区别，电脑关机超过几分钟后，ARP映射表里的IP-MAC对应记录因为超时被丢弃，当外网的唤醒包发到路由器里时，系统找不到MAC地址对应的IP地址，数据包就会被丢弃，根本不会送到网卡那里去，而局域网不管关机多久都可以唤醒是因为局域网是通过广播的方式发送了这个包，它根本不在意这个包中附带的MAC地址对应的IP地址是哪个</p><p>静态ARP绑定需要手动 <code>arp -s ip地址 mac地址</code>，完成后看见那条arp记录的状态是永久的了，就代表成功了，然后就可以通过手机app(如PingTools Pro)或者提供在线WoL(Wake on Lan)服务的网页，向路由器地址的端口7发送魔术封包(Magic Packet)来唤醒计算机,当然还可以的自己写一个脚本去发这个包，比如这个<a href="">用微信远程开机</a></p><p>后来我撸了一台斐讯的K2P，坑爹的斐讯系统里的arp只是个摆设，只能查看列表，不能用arp -s命令来绑定，也没有ip neigh，不过好在它可以刷机，然后我换了个华硕老毛子Padavan固件，很好很强大。<br>再后来刚下车不久，斐讯就翻车了，幸好。</p><p>优点：可以学习到一些网络这块儿的知识<br>缺点：冷门的路由器，需要自己搜索相关的资料，可能会遇到各种不常见的问题，全靠自己手动解决</p><h4 id="DDNS"><a href="#DDNS" class="headerlink" title="DDNS"></a>DDNS</h4><p>虽然电信给了公网IP，但是每次光猫或者路由器重启，或者电信定期断开连接，导致宽带重新拨号后，公网IP就改变了，这时不知道新的IP就无法再使用远程开机，所以我们需要及时获取最新的IP<br>拿到了IP后，可以用邮件通知自己，同时也可以实现DDNS，即动态域名服务，在每次路由器的外网IP发生改变后，自动将域名解析到最新的IP上，这样访问家里的设备只需要记住固定的域名，不用关心IP变成什么了，有了固定的域名还有个好处是可以在路由器或者自己的电脑上搭个小网站之类的<br>DDNS可以使用市面上现有的产品，花生壳向日葵什么的，也可以自行实现，定时检测外网IP，发生改变后，调用域名服务商提供的API接口来修改域名解析，因为我不太会写shell脚本，路由器里也没有python环境，所以我把DDNS脚本放在了远程服务器上，路由器定时去访问，这里不介绍了，可以移步  <strong><a href="2018/06/18/K-python-1/">使用DNSPOD的API实现DDNS</a></strong></p><h3 id="有路由器管理权限，无公网IP"><a href="#有路由器管理权限，无公网IP" class="headerlink" title="有路由器管理权限，无公网IP"></a>有路由器管理权限，无公网IP</h3><p>这种情况和情况2唯一的区别是路由器外网没有公网IP，所以需要做一个内网穿透<br>使用方法和配置请移步  <strong><a href="2018/09/05/T-remote-0/">使用Frp实现内网穿透</a></strong><br>服务端需要一台有公网IP的服务器，或者使用别人提供的在线的Frp服务，配置完成后继续弄客户端<br>这里也分路由器已刷机和未刷机两种情况，已刷机的直接在网页里填，没刷机的下载Frp到路由器里，修改配置文件后启动<br>到这一步，外网就可以访问路由器了，剩下的路由器配置端口转发的部分和情况2中的一致<br>以远程开机为例，大致的原理就是<br>公司电脑发送唤醒包→公网服务端→客户端（路由器）→家里的电脑→开机</p><p>优点: 因为自己的服务器公网IP不会经常改变，所以不需要再单独配置DDNS<br>缺点: 需要一台有公网IP的服务器，消耗自费流量，带宽受到服务器限制</p>]]></content>
       
       <categories>
           
@@ -230,6 +288,33 @@
             <tag> 笔记 </tag>
             
             <tag> Flask </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
+      <title>Selenium</title>
+      <link href="/2018/06/07/K-python-3/"/>
+      <url>/2018/06/07/K-python-3/</url>
+      <content type="html"><![CDATA[]]></content>
+      
+      <categories>
+          
+          <category> 知识 </category>
+          
+          <category> Python </category>
+          
+          <category> 自己的 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Python </tag>
+            
+            <tag> wechatpy </tag>
             
         </tags>
       
@@ -313,29 +398,6 @@
     </entry>
     
     <entry>
-      <title>食记</title>
-      <link href="/2018/05/01/L-cheese-0/"/>
-      <url>/2018/05/01/L-cheese-0/</url>
-      <content type="html"><![CDATA[]]></content>
-      
-      <categories>
-          
-          <category> 生活 </category>
-          
-          <category> 食记 </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> 便当 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    <entry>
       <title>杂记</title>
       <link href="/2018/05/01/L-things-0/"/>
       <url>/2018/05/01/L-things-0/</url>
@@ -353,6 +415,29 @@
         <tags>
             
             <tag> 音乐 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    <entry>
+      <title>食记</title>
+      <link href="/2018/05/01/L-cheese-0/"/>
+      <url>/2018/05/01/L-cheese-0/</url>
+      <content type="html"><![CDATA[]]></content>
+      
+      <categories>
+          
+          <category> 生活 </category>
+          
+          <category> 食记 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 便当 </tag>
             
         </tags>
       
@@ -436,35 +521,6 @@
             <tag> shell </tag>
             
             <tag> on my zsh </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    <entry>
-      <title>Nginx和Apache配置</title>
-      <link href="/2018/03/18/K-linux-1/"/>
-      <url>/2018/03/18/K-linux-1/</url>
-      <content type="html"><![CDATA[<h2 id="Nginx"><a href="#Nginx" class="headerlink" title="Nginx"></a>Nginx</h2><p>###</p><h2 id="Apache"><a href="#Apache" class="headerlink" title="Apache"></a>Apache</h2><p>###</p>]]></content>
-      
-      <categories>
-          
-          <category> 知识 </category>
-          
-          <category> Linux </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> Linux </tag>
-            
-            <tag> Web </tag>
-            
-            <tag> Nginx </tag>
-            
-            <tag> Apache </tag>
             
         </tags>
       

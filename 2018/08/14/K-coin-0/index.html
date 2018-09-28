@@ -79,18 +79,18 @@
 
 
 
-<meta name="description" content="下载https://bitcoin.org/zh_CN/choose-your-wallet选择Bitcoin Core以及需要的版本，然后点安装，下载Bitcoin Core这里以windows版本为例 安装无脑下一步就行了，截止到目前，所需要硬盘容量为200G安装完了运行，就会自动同步区块了，很慢，毕竟要下载所有历史数据，我同步了三天，取决于网络如果是linux系统，进入bin文件夹执行./b">
+<meta name="description" content="因业务需要一个比特币全节点钱包作为钱包服务器来供网站调用RPC服务，所以研究了一下相关的配置">
 <meta name="keywords" content="Bitcoin,RPC,区块链">
 <meta property="og:type" content="article">
 <meta property="og:title" content="比特币核心钱包RPC配置">
 <meta property="og:url" content="http://yoursite.com/2018/08/14/K-coin-0/index.html">
 <meta property="og:site_name" content="海洋锅锅">
-<meta property="og:description" content="下载https://bitcoin.org/zh_CN/choose-your-wallet选择Bitcoin Core以及需要的版本，然后点安装，下载Bitcoin Core这里以windows版本为例 安装无脑下一步就行了，截止到目前，所需要硬盘容量为200G安装完了运行，就会自动同步区块了，很慢，毕竟要下载所有历史数据，我同步了三天，取决于网络如果是linux系统，进入bin文件夹执行./b">
+<meta property="og:description" content="因业务需要一个比特币全节点钱包作为钱包服务器来供网站调用RPC服务，所以研究了一下相关的配置">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2018-09-28T09:18:22.172Z">
+<meta property="og:updated_time" content="2018-09-28T17:12:02.706Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="比特币核心钱包RPC配置">
-<meta name="twitter:description" content="下载https://bitcoin.org/zh_CN/choose-your-wallet选择Bitcoin Core以及需要的版本，然后点安装，下载Bitcoin Core这里以windows版本为例 安装无脑下一步就行了，截止到目前，所需要硬盘容量为200G安装完了运行，就会自动同步区块了，很慢，毕竟要下载所有历史数据，我同步了三天，取决于网络如果是linux系统，进入bin文件夹执行./b">
+<meta name="twitter:description" content="因业务需要一个比特币全节点钱包作为钱包服务器来供网站调用RPC服务，所以研究了一下相关的配置">
 
 
 
@@ -418,12 +418,12 @@
       
 
       
-        <h3 id="下载"><a href="#下载" class="headerlink" title="下载"></a>下载</h3><p><a href="https://bitcoin.org/zh_CN/choose-your-wallet" target="_blank" rel="noopener">https://bitcoin.org/zh_CN/choose-your-wallet</a><br>选择Bitcoin Core以及需要的版本，然后点安装，下载Bitcoin Core<br>这里以windows版本为例</p>
-<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><p>无脑下一步就行了，截止到目前，所需要硬盘容量为200G<br>安装完了运行，就会自动同步区块了，很慢，毕竟要下载所有历史数据，我同步了三天，取决于网络<br>如果是linux系统，进入bin文件夹执行<br><code>./bitcoind --datadir=指定数据存放路径 --daemon</code><br>开启服务，不指定路径的话程序默认在 /当前用户/.bitcoin 保存数据 </p>
-<a id="more"></a>
+        <p>因业务需要一个比特币全节点钱包作为钱包服务器来供网站调用RPC服务，所以研究了一下相关的配置<br><a id="more"></a></p>
+<h3 id="下载"><a href="#下载" class="headerlink" title="下载"></a>下载</h3><p><a href="https://bitcoin.org/zh_CN/choose-your-wallet" target="_blank" rel="noopener">https://bitcoin.org/zh_CN/choose-your-wallet</a><br>选择Bitcoin Core以及需要的版本，然后点安装，下载Bitcoin Core<br>这里以windows版本为例</p>
+<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><p>无脑下一步就行了，截止到目前，所需要硬盘容量为200G<br>安装完了运行，就会自动同步区块了，很慢，毕竟要下载所有历史数据，我同步了三天，取决于网络<br>如果是linux系统，进入bin文件夹执行<br><code>./bitcoind --datadir=指定数据存放路径 --daemon</code><br>开启服务，不指定路径的话程序默认在 /~/.bitcoin 保存数据 </p>
 <h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><p>设置——选项——打开配置文件</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">server=1</span><br><span class="line"></span><br><span class="line">rpcuser=xxx</span><br><span class="line"></span><br><span class="line">rpcpassword=xxx</span><br><span class="line"></span><br><span class="line">rpcallowip=192.168.2.1</span><br><span class="line"></span><br><span class="line">rpcport=8332</span><br></pre></td></tr></table></figure>
-<p>linux需要手动在数据文件夹创建bitcoin.conf配置文件</p>
+<p>linux需要手动在数据文件夹创建bitcoin.conf配置文件再写进去</p>
 <p><strong>参数说明</strong>：<br>server：RPC服务 1打开 0关闭</p>
 <p>rpcuser：RPC用户名</p>
 <p>rpcpassword：RPC密码</p>
@@ -480,8 +480,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/07/01/K-algorithm-0/" rel="next" title="leetcode刷题之旅">
-                <i class="fa fa-chevron-left"></i> leetcode刷题之旅
+              <a href="/2018/07/18/K-linux-1/" rel="next" title="Nginx和Apache配置">
+                <i class="fa fa-chevron-left"></i> Nginx和Apache配置
               </a>
             
           </div>
@@ -578,7 +578,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-count">21</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -600,7 +600,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">39</span>
+                  <span class="site-state-item-count">40</span>
                   <span class="site-state-item-name">tags</span>
                 </a>
               </div>
