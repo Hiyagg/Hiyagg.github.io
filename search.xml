@@ -171,9 +171,9 @@
       
         <tags>
             
-            <tag> Linux </tag>
-            
             <tag> Web </tag>
+            
+            <tag> Linux </tag>
             
             <tag> Nginx </tag>
             
@@ -283,20 +283,20 @@
       
         <tags>
             
-            <tag> Web </tag>
-            
             <tag> 笔记 </tag>
             
             <tag> Flask </tag>
+            
+            <tag> Web </tag>
             
         </tags>
       
     </entry>
     
     <entry>
-      <title>Selenium</title>
-      <link href="/2018/06/07/K-python-3/"/>
-      <url>/2018/06/07/K-python-3/</url>
+      <title>Python微信机器人</title>
+      <link href="/2018/06/07/K-python-2/"/>
+      <url>/2018/06/07/K-python-2/</url>
       <content type="html"><![CDATA[]]></content>
       
       <categories>
@@ -321,9 +321,9 @@
     </entry>
     
     <entry>
-      <title>Python微信机器人</title>
-      <link href="/2018/06/07/K-python-2/"/>
-      <url>/2018/06/07/K-python-2/</url>
+      <title>Selenium</title>
+      <link href="/2018/06/07/K-python-3/"/>
+      <url>/2018/06/07/K-python-3/</url>
       <content type="html"><![CDATA[]]></content>
       
       <categories>
